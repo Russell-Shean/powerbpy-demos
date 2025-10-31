@@ -1,0 +1,4 @@
+powerbpy
+pandas
+py7zr
+requests
