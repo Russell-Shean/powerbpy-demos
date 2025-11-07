@@ -1,0 +1,62 @@
+table final_dataset
+	lineageTag: bc840ff0-562d-4987-97b8-91b2a1d11054
+
+	column Name
+		dataType: string
+		lineageTag: f766c7be-af8c-4e2d-9012-7210a1c01fc4
+		summarizeBy: none
+		sourceColumn: Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sales First 180 Days'
+		dataType: double
+		lineageTag: a31783c8-3f80-47a8-9179-70b3f8e72172
+		summarizeBy: sum
+		sourceColumn: Sales First 180 Days
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Sales Last 180 Days'
+		dataType: double
+		lineageTag: c743c4c0-db4e-4ce5-87cd-761f2a04fcc1
+		summarizeBy: sum
+		sourceColumn: Sales Last 180 Days
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Starting Size'
+		dataType: string
+		lineageTag: 5ba4dd06-bfc6-490f-8565-05e5d053affe
+		summarizeBy: none
+		sourceColumn: Starting Size
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ending Size'
+		dataType: string
+		lineageTag: 4bf09e49-e4e9-47cc-ab17-8543d1108a14
+		summarizeBy: none
+		sourceColumn: Ending Size
+
+		annotation SummarizationSetBy = Automatic
+
+	partition final_dataset = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents("C:\r_projects\powerbpy-demos\WOW\2025\13\data\final_dataset.csv"),[Delimiter=",", Columns=5, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Replaced Value" = Table.ReplaceValue(#"Promoted Headers","NA",null,Replacer.ReplaceValue,{"Name", "Sales First 180 Days", "Sales Last 180 Days", "Starting Size", "Ending Size"}),
+					#"Changed Type" = Table.TransformColumnTypes(#"Replaced Value",{  {"Name", type text}, {"Sales First 180 Days", type number}, {"Sales Last 180 Days", type number}, {"Starting Size", type text}, {"Ending Size", type text}   })
+				in
+					#"Changed Type"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+
