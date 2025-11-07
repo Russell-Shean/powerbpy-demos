@@ -17,5 +17,4 @@ pbi.add_local_csv(dashboard_path = dashboard_path,
             data_path = data_location )
 
 
-# new page
-#pbi.add_new_page(dashboard_path = dashboard_path, page_name="page1" )
+# add a table
