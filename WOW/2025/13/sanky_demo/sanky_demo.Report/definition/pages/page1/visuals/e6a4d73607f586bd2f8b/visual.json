@@ -98,6 +98,74 @@
         }
       }
     },
+    "objects": {
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "102.96798998472886D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Sum(final_dataset.Sales First 180 Days)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "92.51908925234723D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Sum(final_dataset.Sales Last 180 Days)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "256.10221490924766D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "final_dataset.Name"
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Store Sales Detail'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
     "drillFilterOtherVisuals": true
   },
   "filterConfig": {
