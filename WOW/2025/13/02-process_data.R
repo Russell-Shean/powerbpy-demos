@@ -7,6 +7,8 @@ library(readr)
 # as the root directory
 # Not powerbpy-demos
 
+# setwd("WOW/2025/13")
+
 # Read in datasets
 store <- read_csv("data/store.csv")
 sales <- read_csv("data/sales.csv")
@@ -50,9 +52,10 @@ sales_by_store_and_date <- sales |>
          `Sales First 180 Days` = store_total_sales_first_180,
          `Sales Last 180 Days` = store_total_sales_last_180,
          `Starting Size` = sales_size_first_180,
-         `Ending Size` = sales_size_last_180) |>
+         `Ending Size` = sales_size_last_180) 
 
 
+sales_by_store_and_date |>
   write.csv("data/final_dataset.csv", row.names = FALSE)
 
 

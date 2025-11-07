@@ -84,18 +84,72 @@ sales_by_store_and_date = (
             ]
 
 
-
-
-
-
         ) 
 
 
     )
 
+    # Merge the store names onto the dataframe
+    .merge(
+        
+        store_names, 
+        on = "StoreKey",
+        how = "left"
 
+    )
+
+    # pivot the dataframe to expand the time period and sales size columns wider
+    .pivot(
+        index="Description",
+        columns="time_period",
+        values=['store_total_sales', "sales_size"]
+    )
 
 )
 
+
+# undo the multi indexing of column names 
+# (I don't even want to try to imagine how Power BI would try to handle that lol)
+sales_by_store_and_date.columns = [
+    f"{val}_{col}" for val, col in sales_by_store_and_date.columns
+]
+
+# finish the final steps in the chain
+sales_by_store_and_date = (
+
+    sales_by_store_and_date
+
+    # reset the index
+    .reset_index()
+
+    # select the columns we want
+    .loc[:, ["Description", 
+             "store_total_sales_first_180",
+             "store_total_sales_last_180",
+             "sales_size_first_180",
+             "sales_size_last_180"]]
+
+    # Rename the columns we want
+    .rename(columns={
+        'Description': 'Name',
+        'store_total_sales_first_180': 'Sales First 180 Days',
+        'store_total_sales_last_180': 'Sales Last 180 Days',
+        'sales_size_first_180': 'Starting Size',
+        'sales_size_last_180': 'Ending Size'
+    })
+
+)
+
+# write to file
+sales_by_store_and_date.to_csv("data/final_dataset.csv", index=False)   
+
+
+
+
+
+
+
 print(sales_by_store_and_date)
+#sales_by
+#print(store_names)
 
