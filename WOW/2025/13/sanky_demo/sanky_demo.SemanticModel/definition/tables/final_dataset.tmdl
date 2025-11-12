@@ -1,0 +1,62 @@
+table final_dataset
+	lineageTag: b5fb5b36-8c12-4a55-be6b-7df55a7a3672
+
+	column 'Name'
+		dataType: string
+		lineageTag: 0375bb23-e818-4570-9326-1a75f7f1dc35
+		summarizeBy: none
+		sourceColumn: Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sales First 180 Days'
+		dataType: double
+		lineageTag: 56bd78c8-2b98-4718-85f9-66d294a0ea6f
+		summarizeBy: sum
+		sourceColumn: Sales First 180 Days
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Sales Last 180 Days'
+		dataType: double
+		lineageTag: 0baf85e0-3d34-4a0c-b542-3e388b67744a
+		summarizeBy: sum
+		sourceColumn: Sales Last 180 Days
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Starting Size'
+		dataType: string
+		lineageTag: 7041f21c-5ade-44e7-8dcd-9103120d0acf
+		summarizeBy: none
+		sourceColumn: Starting Size
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ending Size'
+		dataType: string
+		lineageTag: d36acb48-97de-4e6e-8a20-6185e97fd359
+		summarizeBy: none
+		sourceColumn: Ending Size
+
+		annotation SummarizationSetBy = Automatic
+
+	partition final_dataset = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents("C:\r_projects\powerbpy-demos\WOW\2025\13\data\final_dataset.csv"),[Delimiter=",", Columns=5, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+					#"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					#"Replaced Value" = Table.ReplaceValue(#"Promoted Headers","NA",null,Replacer.ReplaceValue,{"Name", "Sales First 180 Days", "Sales Last 180 Days", "Starting Size", "Ending Size"}),
+					#"Changed Type" = Table.TransformColumnTypes(#"Replaced Value",{  {"Name", type text}, {"Sales First 180 Days", type number}, {"Sales Last 180 Days", type number}, {"Starting Size", type text}, {"Ending Size", type text}   })
+				in
+					#"Changed Type"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+
