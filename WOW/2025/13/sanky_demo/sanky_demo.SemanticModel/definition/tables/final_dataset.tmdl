@@ -1,7 +1,7 @@
 table final_dataset
 	lineageTag: b5fb5b36-8c12-4a55-be6b-7df55a7a3672
 
-	column 'Name'
+	column Name
 		dataType: string
 		lineageTag: 0375bb23-e818-4570-9326-1a75f7f1dc35
 		summarizeBy: none

@@ -3,7 +3,6 @@
   "datasetReference": {
     "byPath": {
       "path": "../sanky_demo.SemanticModel"
-    },
-    "byConnection": null
+    }
   }
 }

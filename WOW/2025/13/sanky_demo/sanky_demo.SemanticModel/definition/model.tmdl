@@ -8,14 +8,11 @@ model Model
 
 annotation PBI_ProTooling = ["DevMode"]
 
-annotation PBIDesktopVersion = 2.137.952.0 (24.10)
-
 annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_QueryOrder = ['final_dataset']
 
+ref table final_dataset
+
 ref cultureInfo en-US
 
-
-
-ref table final_dataset
