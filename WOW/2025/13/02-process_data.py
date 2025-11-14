@@ -142,14 +142,3 @@ sales_by_store_and_date = (
 
 # write to file
 sales_by_store_and_date.to_csv("data/final_dataset.csv", index=False)   
-
-
-
-
-
-
-
-print(sales_by_store_and_date)
-#sales_by
-#print(store_names)
-
