@@ -70,10 +70,10 @@ sales_by_store_and_date = (
             [
                 df["store_total_sales"] < 1000,
 
-                (df["store_total_sales"] > 1000) &
+                (df["store_total_sales"] >= 1000) &
                 (df["store_total_sales"] < 5000),
 
-                df["store_total_sales"] > 5000
+                df["store_total_sales"] >= 5000
  
             ],
 
@@ -81,7 +81,8 @@ sales_by_store_and_date = (
                 "Small",
                 "Medium",
                 "Large"
-            ]
+            ],
+        default="Unknown" 
 
 
         ) 
