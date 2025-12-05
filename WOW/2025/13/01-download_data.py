@@ -6,9 +6,6 @@ import tempfile
 '''
 This script downloads the data from Github and 
 then extracts the individual datasets from the compressed archive file. 
-
-
-
 '''
 
 # step 1: obtain data from github --------------------------------------------------------------

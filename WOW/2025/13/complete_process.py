@@ -1,10 +1,52 @@
+import requests
+import py7zr
+import os
+import tempfile
+
 import pandas as pd
 import numpy as np
 
+from powerbpy import Dashboard
+import os
 
 '''
-This script proccess the data we downloaded 
+Step 1 Download data --------------------------------------------
+Download the data from Github and 
+then extract the individual datasets from the compressed archive file. 
 '''
+
+# step 1: obtain data from github --------------------------------------------------------------
+
+# Define paths
+dataset_url = "https://github.com/sql-bi/Contoso-Data-Generator-V2-Data/releases/download/ready-to-use-data/csv-10k.7z" 
+data_destination_dir = "data"
+
+
+# make sure the folder exists
+os.makedirs(data_destination_dir, exist_ok=True)
+
+# download the zip file from the internet
+response = requests.get(dataset_url, stream=True)
+response.raise_for_status()
+
+# write to file
+with tempfile.NamedTemporaryFile(suffix=".7z", delete=False) as tmp_file:
+    with open(tmp_file.name, "wb") as f:
+        for chunk in response.iter_content(chunk_size=8192):
+            f.write(chunk)
+
+
+
+# extract the data 
+with py7zr.SevenZipFile(tmp_file.name, mode="r") as z:
+    z.extractall(path=data_destination_dir)
+
+
+'''
+Step 2 Process data --------------------------------------------
+Proccess the data we downloaded 
+'''
+
 
 # Read in the datasets
 store = pd.read_csv("data/store.csv")
@@ -148,3 +190,49 @@ sales_by_store_and_date = (
 
 # write to file
 sales_by_store_and_date.to_csv("data/final_dataset.csv", index=False)   
+
+
+'''
+Step 3 Create dashboard --------------------------------------------
+Create a new dashboard using the data we downloaded and processesd
+'''
+
+# Define the path to the dashboard
+dashboard_path = os.path.join(os.getcwd(), "sanky_demo")
+
+
+# Create a new blank dashboard
+my_dashboard = Dashboard.create(dashboard_path)
+
+# add the data from step 2
+my_dashboard.add_local_csv(data_path = "data/final_dataset.csv" )
+
+# Add a new page to the dashboard
+page1 = my_dashboard.new_page(page_name="A demonstration sanky chart")
+
+
+# add a table
+page1.add_table(visual_id = "sales_table", 
+              data_source = "final_dataset", 
+              variables = ["Name", "Sales First 180 Days", "Sales Last 180 Days", "Starting Size", "Ending Size"],
+              x_position = 615, 
+              y_position = 0, 
+              height = 800, 
+              width = 615,
+              add_totals_row = False,
+              table_title = "Store Sales Details")
+
+
+page1.add_sanky_chart(visual_id = "sales_sanky", 
+              data_source = "final_dataset",
+              chart_title="Store Starting and Ending Size",
+              starting_var="Starting Size",
+              starting_var_values=["Large", "Medium", "Small"], 
+              ending_var="Ending Size",
+              ending_var_values=["Large", "Medium", "Small"],
+              values_from_var="Name", 
+              x_position=0, 
+              y_position=0, 
+              height = 800, 
+              width = 615)
+

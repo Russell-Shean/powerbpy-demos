@@ -1,6 +1,10 @@
 from powerbpy import Dashboard
 import os
 
+'''
+This script creates a new dashboard using the data we downloaded and processesd
+'''
+
 # Define the path to the dashboard
 dashboard_path = os.path.join(os.getcwd(), "sanky_demo")
 
