@@ -110,7 +110,7 @@ sales_by_store_and_date = (
 
 
 # undo the multi indexing of column names 
-# (I don't even want to try to imagine how Power BI would try to handle that lol)
+# (I don't even want to try to imagine how Power BI would try to handle multi-indexed columns lol)
 sales_by_store_and_date.columns = [
     f"{val}_{col}" for val, col in sales_by_store_and_date.columns
 ]
