@@ -1,32 +1,46 @@
-import requests
-import py7zr
+'''
+This script contains the entire process to create the sanky chart and table Power BI dashboard
+Including data download and processing. 
+Step 1 Download data --------------------------------------------
+Download the data from Github and
+then extract the individual datasets from the compressed archive file.
+
+Step 2 Process data --------------------------------------------
+Proccess the data we downloaded
+
+Step 3 Create dashboard --------------------------------------------
+Create a new dashboard using the data we downloaded and processesd
+
+'''
+# pylint: disable=line-too-long
+# pylint: disable=import-error
+# pylint: disable=invalid-name
+
 import os
 import tempfile
+import requests
+import py7zr
+
 
 import pandas as pd
 import numpy as np
 
 from powerbpy import Dashboard
-import os
 
-'''
-Step 1 Download data --------------------------------------------
-Download the data from Github and 
-then extract the individual datasets from the compressed archive file. 
-'''
+
 
 # step 1: obtain data from github --------------------------------------------------------------
 
 # Define paths
-dataset_url = "https://github.com/sql-bi/Contoso-Data-Generator-V2-Data/releases/download/ready-to-use-data/csv-10k.7z" 
-data_destination_dir = "data"
+DATASET_URL = "https://github.com/sql-bi/Contoso-Data-Generator-V2-Data/releases/download/ready-to-use-data/csv-10k.7z"
+DATA_DESTINATION_DIR = "data"
 
 
 # make sure the folder exists
-os.makedirs(data_destination_dir, exist_ok=True)
+os.makedirs(DATA_DESTINATION_DIR, exist_ok=True)
 
 # download the zip file from the internet
-response = requests.get(dataset_url, stream=True)
+response = requests.get(DATASET_URL, stream=True)
 response.raise_for_status()
 
 # write to file
@@ -37,16 +51,11 @@ with tempfile.NamedTemporaryFile(suffix=".7z", delete=False) as tmp_file:
 
 
 
-# extract the data 
+# extract the data
 with py7zr.SevenZipFile(tmp_file.name, mode="r") as z:
-    z.extractall(path=data_destination_dir)
+    z.extractall(path=DATA_DESTINATION_DIR)
 
-
-'''
-Step 2 Process data --------------------------------------------
-Proccess the data we downloaded 
-'''
-
+# Step 2 Process data --------------------------------------------
 
 # Read in the datasets
 store = pd.read_csv("data/store.csv")
@@ -81,12 +90,12 @@ sales_by_store_and_date = (
             [
                 df["OrderDate"] <= df
                                    .groupby("StoreKey")["OrderDate"]
-                                   .transform("min") 
+                                   .transform("min")
                                    + pd.Timedelta(days=180),
 
                 df["OrderDate"] >= df
                                    .groupby("StoreKey")["OrderDate"]
-                                   .transform("max") 
+                                   .transform("max")
                                    - pd.Timedelta(days=180)
             ],
 
@@ -100,7 +109,7 @@ sales_by_store_and_date = (
 
 
         )
-    ) 
+    )
 
     # calculate grouped sales totals by time period and store
     .groupby(["StoreKey", "time_period"], as_index=False)
@@ -121,26 +130,26 @@ sales_by_store_and_date = (
                 (df["store_total_sales"] < 5000),
 
                 df["store_total_sales"] >= 5000
- 
+
             ],
 
-            [ 
+            [
                 "Small",
                 "Medium",
                 "Large"
             ],
-        default="Unknown" 
+        default="Unknown"
 
 
-        ) 
+        )
 
 
     )
 
     # Merge the store names onto the dataframe
     .merge(
-        
-        store_names, 
+
+        store_names,
         on = "StoreKey",
         how = "left"
 
@@ -156,7 +165,7 @@ sales_by_store_and_date = (
 )
 
 
-# undo the multi indexing of column names 
+# undo the multi indexing of column names
 # (I don't even want to try to imagine how Power BI would try to handle multi-indexed columns lol)
 sales_by_store_and_date.columns = [
     f"{val}_{col}" for val, col in sales_by_store_and_date.columns
@@ -171,7 +180,7 @@ sales_by_store_and_date = (
     .reset_index()
 
     # select the columns we want
-    .loc[:, ["Description", 
+    .loc[:, ["Description",
              "store_total_sales_first_180",
              "store_total_sales_last_180",
              "sales_size_first_180",
@@ -189,13 +198,10 @@ sales_by_store_and_date = (
 )
 
 # write to file
-sales_by_store_and_date.to_csv("data/final_dataset.csv", index=False)   
+sales_by_store_and_date.to_csv("data/final_dataset.csv", index=False)
 
 
-'''
-Step 3 Create dashboard --------------------------------------------
-Create a new dashboard using the data we downloaded and processesd
-'''
+# Create the dashboard ---------------------------------------------------------------
 
 # Define the path to the dashboard
 dashboard_path = os.path.join(os.getcwd(), "sanky_demo")
@@ -212,27 +218,30 @@ page1 = my_dashboard.new_page(page_name="A demonstration sanky chart")
 
 
 # add a table
-page1.add_table(visual_id = "sales_table", 
-              data_source = "final_dataset", 
-              variables = ["Name", "Sales First 180 Days", "Sales Last 180 Days", "Starting Size", "Ending Size"],
-              x_position = 615, 
-              y_position = 0, 
-              height = 800, 
+page1.add_table(visual_id = "sales_table",
+              data_source = "final_dataset",
+              variables = ["Name", 
+                           "Sales First 180 Days", 
+                           "Sales Last 180 Days", 
+                           "Starting Size", 
+                           "Ending Size"],
+              x_position = 615,
+              y_position = 0,
+              height = 800,
               width = 615,
               add_totals_row = False,
               table_title = "Store Sales Details")
 
 
-page1.add_sanky_chart(visual_id = "sales_sanky", 
+page1.add_sanky_chart(visual_id = "sales_sanky",
               data_source = "final_dataset",
               chart_title="Store Starting and Ending Size",
               starting_var="Starting Size",
-              starting_var_values=["Large", "Medium", "Small"], 
+              starting_var_values=["Large", "Medium", "Small"],
               ending_var="Ending Size",
               ending_var_values=["Large", "Medium", "Small"],
-              values_from_var="Name", 
-              x_position=0, 
-              y_position=0, 
-              height = 800, 
+              values_from_var="Name",
+              x_position=0,
+              y_position=0,
+              height = 800,
               width = 615)
-

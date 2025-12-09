@@ -1,10 +1,10 @@
+'''
+This script proccesses the data we downloaded
+'''
+# pylint: disable=import-error, invalid-name
+
 import pandas as pd
 import numpy as np
-
-
-'''
-This script proccess the data we downloaded 
-'''
 
 # Read in the datasets
 store = pd.read_csv("data/store.csv")
@@ -39,12 +39,12 @@ sales_by_store_and_date = (
             [
                 df["OrderDate"] <= df
                                    .groupby("StoreKey")["OrderDate"]
-                                   .transform("min") 
+                                   .transform("min")
                                    + pd.Timedelta(days=180),
 
                 df["OrderDate"] >= df
                                    .groupby("StoreKey")["OrderDate"]
-                                   .transform("max") 
+                                   .transform("max")
                                    - pd.Timedelta(days=180)
             ],
 
@@ -58,7 +58,7 @@ sales_by_store_and_date = (
 
 
         )
-    ) 
+    )
 
     # calculate grouped sales totals by time period and store
     .groupby(["StoreKey", "time_period"], as_index=False)
@@ -79,26 +79,26 @@ sales_by_store_and_date = (
                 (df["store_total_sales"] < 5000),
 
                 df["store_total_sales"] >= 5000
- 
+
             ],
 
-            [ 
+            [
                 "Small",
                 "Medium",
                 "Large"
             ],
-        default="Unknown" 
+        default="Unknown"
 
 
-        ) 
+        )
 
 
     )
 
     # Merge the store names onto the dataframe
     .merge(
-        
-        store_names, 
+
+        store_names,
         on = "StoreKey",
         how = "left"
 
@@ -114,7 +114,7 @@ sales_by_store_and_date = (
 )
 
 
-# undo the multi indexing of column names 
+# undo the multi indexing of column names
 # (I don't even want to try to imagine how Power BI would try to handle multi-indexed columns lol)
 sales_by_store_and_date.columns = [
     f"{val}_{col}" for val, col in sales_by_store_and_date.columns
@@ -129,7 +129,7 @@ sales_by_store_and_date = (
     .reset_index()
 
     # select the columns we want
-    .loc[:, ["Description", 
+    .loc[:, ["Description",
              "store_total_sales_first_180",
              "store_total_sales_last_180",
              "sales_size_first_180",
@@ -147,4 +147,4 @@ sales_by_store_and_date = (
 )
 
 # write to file
-sales_by_store_and_date.to_csv("data/final_dataset.csv", index=False)   
+sales_by_store_and_date.to_csv("data/final_dataset.csv", index=False)
