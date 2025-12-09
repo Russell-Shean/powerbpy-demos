@@ -7,7 +7,6 @@ import pandas as pd
 import numpy as np
 
 from powerbpy import Dashboard
-import os
 
 '''
 Step 1 Download data --------------------------------------------
