@@ -1,6 +1,6 @@
 '''
 This script contains the entire process to create the sanky chart and table Power BI dashboard
-Including data download and processing. 
+Including data download and processing.
 Step 1 Download data --------------------------------------------
 Download the data from Github and
 then extract the individual datasets from the compressed archive file.
@@ -220,10 +220,10 @@ page1 = my_dashboard.new_page(page_name="A demonstration sanky chart")
 # add a table
 page1.add_table(visual_id = "sales_table",
               data_source = "final_dataset",
-              variables = ["Name", 
-                           "Sales First 180 Days", 
-                           "Sales Last 180 Days", 
-                           "Starting Size", 
+              variables = ["Name",
+                           "Sales First 180 Days",
+                           "Sales Last 180 Days",
+                           "Starting Size",
                            "Ending Size"],
               x_position = 615,
               y_position = 0,
