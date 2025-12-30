@@ -27,11 +27,14 @@ sales["OrderDate"] = pd.to_datetime(sales["OrderDate"])
 
 sales_by_store_and_date = (
     sales
-
-    # assign seems to be similiar to mutate
+  
+    # assign seems to be similar to mutate in R
+    # It creates a new variable
     .assign(
 
         # np.select appears to be similiar to case_when
+        # It checks logical conditions and assigns a new value for 
+        # variable we created using assign based on the logical tests
         time_period = lambda df: np.select(
 
 
