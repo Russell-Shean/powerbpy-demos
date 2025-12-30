@@ -79,10 +79,11 @@ sales["OrderDate"] = pd.to_datetime(sales["OrderDate"])
 sales_by_store_and_date = (
     sales
 
-    # assign seems to be similiar to mutate
+    # assign seems to be similiar to mutate in R
+    # It creates new variables
     .assign(
 
-        # np.select appears to be similiar to case_when
+        # np.select appears to be similiar to case_when in R
         time_period = lambda df: np.select(
 
 
